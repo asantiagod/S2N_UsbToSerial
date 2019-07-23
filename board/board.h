@@ -96,9 +96,9 @@
 	#define clearStatusLed()	GPIO_PinWrite(_LED_STAT_GPIO_, _LED_STAT_PIN_, LED_OFF())
 	#define toggleStatusLed()	GPIO_PortToggle(_LED_STAT_GPIO_, 1u<<_LED_STAT_PIN_)
 
-	#define togglePwrLed()	GPIO_TogglePinsOutput(_LED_PWR_GPIO_, 1u<<_LED_PWR_PIN_)
-	#define setPwrLed()		GPIO_PinWrite(_LED_PWR_GPIO_, _LED_PWR_PIN_, 1u)
-	#define clearPwrLed()	GPIO_PinWrite(_LED_PWR_GPIO_, _LED_PWR_PIN_, 0u)
+	#define togglePwrPin()	GPIO_TogglePinsOutput(_PWR_GPIO_, 1u<<_LED_PWR_PIN_)
+	#define setPwrPin()		GPIO_PinWrite(_PWR_GPIO_, _PWR_PIN_, 1u)
+	#define clearPwrPin()	GPIO_PinWrite(_PWR_GPIO_, _PWR_PIN_, 0u)
 
 	#define readResetPin()	GPIO_PinRead(_RESET_PIN_GPIO_, _RESET_PIN_)
 

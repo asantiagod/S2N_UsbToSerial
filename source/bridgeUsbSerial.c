@@ -9,7 +9,7 @@
 /*			  					Includes							*/
 /*==================================================================*/
 	#include <bridgeUsbSerial.h>
-#include "board.h"
+	#include "board.h"
 	#include <string.h>
 
 	/* Virtual COM */
@@ -74,7 +74,8 @@
 	 */
 	static void rxTimeoutCallback(TimerHandle_t);
 
-	static inline void echo(char *command);
+	static inline int executeCommand(char *command);
+	static inline void echo(char *msg);
 
 /*==================================================================*/
 /*			  				Body of the functions					*/
@@ -139,7 +140,8 @@
 			xSemaphoreTake(rxMutex,portMAX_DELAY);
 
 			rxBuffer[rxLength]= '\0'; //Set the null character
-			echo((char*)rxBuffer);
+			if(!executeCommand((char*)rxBuffer))
+				echo((char*)rxBuffer);
 			rxLength = 0;
 			xSemaphoreGive(rxMutex);
 		}
@@ -151,12 +153,27 @@
 	}
 
 
+	static inline int executeCommand(char *command)
+	{
+		if(strcmp(command,"-->POWER_ON\r\n") == 0)
+		{
+			const char msg[]="OK\r\n";
+			setPwrPin();
+			vTaskDelay(pdMS_TO_TICKS(500));
+			clearPwrPin();
+			vTaskDelay(pdMS_TO_TICKS(500));
+			USB_VcomWriteBlocking(usbhandle, msg, 4u);
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Waits for the message to start the configuration process.
 	 */
-	static inline void echo(char *command)
+	static inline void echo(char *msg)
 	{
-		USB_VcomWriteBlocking(usbhandle, command, strlen(command));
+		USB_VcomWriteBlocking(usbhandle,(uint8_t*) msg, strlen(msg));
 	}
 
 
