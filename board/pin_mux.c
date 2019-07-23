@@ -63,8 +63,18 @@ BOARD_InitPins:
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void)
 {
+	/* Port C Clock Gate Control: Clock enabled */
+	CLOCK_EnableClock(kCLOCK_PortC);
+
     /* Port D Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortD);
+
+    /* Port E Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortE);
+
+    PORT_SetPinMux(PORTC, 10u, kPORT_MuxAsGpio);
+
+    PORT_SetPinMux(PORTE, 1u, kPORT_MuxAsGpio);
 
     /* PORTD6 (pin 63) is configured as UART0_RX */
     PORT_SetPinMux(PORTD, 6U, kPORT_MuxAlt3);

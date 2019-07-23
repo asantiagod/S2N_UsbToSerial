@@ -24,16 +24,7 @@
 
 	#define COMMAND_SIZE(cmd)	(sizeof(cmd)-1)
 
-	#define  OK_STRING		"OK\r\n"
-	#define  ERROR_STRING	"ERROR\r\n"
-	#define  ENTER_CONFIG	"AT+CONFIG\r\n"
-	#define  EXIT_CONFIG	"AT+ESC\r\n"
 
-	#define AT_QUERY	'?'	///< Indica que el comando ese de consulta.
-	#define AT_SET		'='	///< Indica que se va a modificar el valor de una variable.
-	static char AT_OK[] = OK_STRING;	///< Respuesta de OK.
-	static char AT_ERROR[] = ERROR_STRING;	///< Respuesta de error.
-	static char AT_EOF[] = "\r\n";	///< Fin de trama de los comandos AT.
 
 	/**
 	 * Data type to make a "dispatch table" for the configuration.
@@ -45,12 +36,6 @@
 		void (*commandHandler)(char*);
 	} COMMAND_T;
 
-/* TODO: The next defines don't have be here, remove after tests*/
-#define VERSION_MAJOR	2u
-#define VERSION_MINOR	1u
-#define VERSION_PATCH	0u
-
-#define UBIDOTS_TOKEN_SIZE 40
 
 /*==================================================================*/
 /*			  					Variables 							*/
