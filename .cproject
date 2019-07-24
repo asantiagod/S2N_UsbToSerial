@@ -87,20 +87,16 @@
 									<listOptionValue builtIn="false" value="../amazon-freertos/include"/>
 									<listOptionValue builtIn="false" value="../amazon-freertos/FreeRTOS/portable"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../drivers/freertos"/>
 									<listOptionValue builtIn="false" value="../device"/>
 									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../component/serial_manager"/>
 									<listOptionValue builtIn="false" value="../component/uart"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
-									<listOptionValue builtIn="false" value="../usb/device/class"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
-									<listOptionValue builtIn="false" value="../usb/device/source/ehci"/>
 									<listOptionValue builtIn="false" value="../usb/device/source/khci"/>
-									<listOptionValue builtIn="false" value="../usb/device/source/lpcip3511"/>
-									<listOptionValue builtIn="false" value="../source/generated"/>
 									<listOptionValue builtIn="false" value="../usb/include"/>
-									<listOptionValue builtIn="false" value="../usb/phy"/>
 									<listOptionValue builtIn="false" value="../osa"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.files.87251848" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files" useByScannerDiscovery="false"/>
@@ -137,7 +133,7 @@
 							<tool id="com.crt.advproject.gas.exe.debug.1057684295" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.debug">
 								<option id="com.crt.advproject.gas.thumb.1310094379" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.gas.arch.1930038005" name="Architecture" superClass="com.crt.advproject.gas.arch" useByScannerDiscovery="false" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
-								<option id="gnu.both.asm.option.flags.crt.733020789" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" useByScannerDiscovery="false"/>
+								<option id="gnu.both.asm.option.flags.crt.733020789" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" useByScannerDiscovery="false" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option id="gnu.both.asm.option.include.paths.1460403730" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../source"/>
@@ -150,15 +146,10 @@
 									<listOptionValue builtIn="false" value="../component/serial_manager"/>
 									<listOptionValue builtIn="false" value="../component/uart"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
-									<listOptionValue builtIn="false" value="../usb/device/class"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
-									<listOptionValue builtIn="false" value="../usb/device/source/ehci"/>
 									<listOptionValue builtIn="false" value="../usb/device/source/khci"/>
-									<listOptionValue builtIn="false" value="../usb/device/source/lpcip3511"/>
-									<listOptionValue builtIn="false" value="../source/generated"/>
 									<listOptionValue builtIn="false" value="../usb/include"/>
-									<listOptionValue builtIn="false" value="../usb/phy"/>
 									<listOptionValue builtIn="false" value="../osa"/>
 								</option>
 								<option id="gnu.both.asm.option.warnings.nowarn.1474708518" name="Suppress warnings (-W)" superClass="gnu.both.asm.option.warnings.nowarn" useByScannerDiscovery="false"/>
@@ -433,7 +424,7 @@
 							<tool id="com.crt.advproject.gas.exe.release.592754484" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.release">
 								<option id="com.crt.advproject.gas.thumb.464734267" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.gas.arch.1937956386" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
-								<option id="gnu.both.asm.option.flags.crt.198632549" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt"/>
+								<option id="gnu.both.asm.option.flags.crt.198632549" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option id="gnu.both.asm.option.include.paths.1228197388" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../source"/>

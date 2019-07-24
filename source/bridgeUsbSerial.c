@@ -17,6 +17,8 @@
 	#include "usb_device.h"
 	#include "virtual_com.h"
 
+	#include "fsl_uart_freertos.h"
+
 
 /*==================================================================*/
 /*			  			Constants, local defines 					*/
@@ -49,17 +51,21 @@
 
 	static usb_device_handle usbhandle;
 
-	uint8_t changeFlags = 0;
 	char bufMsg[512]; //Must be greater than or equal to SIZE_VAR
 
-/*==================================================================*/
-/*			  			Prototype of local functions				*/
-/*==================================================================*/
+
+	/* Variables to implement the communication with the UART*/
+	static TimerHandle_t tUartHand;
+	static SemaphoreHandle_t uartMutex;
+	static SemaphoreHandle_t uartSemph;
+
+	static uint8_t uartBuffer[512];
+	static size_t nBytesUartBuf = 0;
+	static uart_rtos_handle_t 	handle;
+	static uart_handle_t		t_handle;
 
 
-/*==================================================================*/
-/*			  			Prototype of local functions				*/
-/*==================================================================*/
+
 /*==================================================================*/
 /*			  			Prototype of local functions				*/
 /*==================================================================*/
@@ -76,6 +82,17 @@
 
 	static inline int executeCommand(char *command);
 	static inline void echo(char *msg);
+
+
+	/* Callback function to handle the reception timeout */
+	static void timeoutUart(TimerHandle_t t);
+
+	/* Task to handle the data reception from the UART */
+	static void rxUartTsk(void *);
+
+	/* Wait for a complete rx frame to send it to the M95 driver */
+	static void rxFrameTsk(void *);
+
 
 /*==================================================================*/
 /*			  				Body of the functions					*/
@@ -106,6 +123,10 @@
 						NULL,
 						USB_DEVICE_INTERRUPT_PRIORITY, //TODO: set the correct priority
 						NULL);
+		configASSERT(stat);
+
+
+		stat = xTaskCreate(rxUartTsk, "uartTsk", 200, NULL, 4, NULL); //TODO priority
 		configASSERT(stat);
 
 		for(;;)
@@ -157,12 +178,10 @@
 	{
 		if(strcmp(command,"-->POWER_ON\r\n") == 0)
 		{
-			const char msg[]="OK\r\n";
 			setPwrPin();
 			vTaskDelay(pdMS_TO_TICKS(500));
 			clearPwrPin();
 			vTaskDelay(pdMS_TO_TICKS(500));
-			USB_VcomWriteBlocking(usbhandle, msg, 4u);
 			return true;
 		}
 		return false;
@@ -173,7 +192,83 @@
 	 */
 	static inline void echo(char *msg)
 	{
-		USB_VcomWriteBlocking(usbhandle,(uint8_t*) msg, strlen(msg));
+		UART_RTOS_Send(&handle, (uint8_t*) msg, strlen(msg));
+	}
+
+
+	static void timeoutUart(TimerHandle_t t)
+	{
+		xSemaphoreGive(uartSemph);
+	}
+
+	static void rxUartTsk(void *p)
+	{
+		uint8_t bgBuffer[100];
+		uart_rtos_config_t uart_config = {
+											.base = UART0,
+											.srcclk = CLOCK_GetFreq(UART0_CLK_SRC),
+											.baudrate = 115200,
+											.parity = kUART_ParityDisabled,
+											.stopbits = kUART_OneStopBit,
+											.buffer = bgBuffer,
+											.buffer_size = sizeof(bgBuffer)
+									  	 };
+		NVIC_SetPriority(UART0_RX_TX_IRQn, 5);
+		uint8_t uartbyte[1];
+		size_t n;
+
+
+		tUartHand = xTimerCreate("uart timer", pdMS_TO_TICKS(20), pdFALSE, NULL, timeoutUart);
+		configASSERT(tUartHand);
+
+		uartMutex = xSemaphoreCreateMutex();
+		configASSERT(uartMutex);
+
+		uartSemph = xSemaphoreCreateBinary();
+		configASSERT(uartSemph);
+
+		if(UART_RTOS_Init(&handle, &t_handle, &uart_config) != 0)
+			vTaskSuspend(NULL);
+
+		if(xTaskCreate(rxFrameTsk, "rxFrameTsk", configMINIMAL_STACK_SIZE, NULL, 3, NULL) != pdPASS)
+			vTaskSuspend(NULL);
+
+		for(;;)
+		{
+			//TODO Avoid data corruption
+			if(UART_RTOS_Receive(&handle, uartbyte, 1, &n) == kStatus_Success)
+			{
+				if(xSemaphoreTake(uartMutex,0) == pdTRUE)
+				{
+					if(nBytesUartBuf<sizeof(uartBuffer) - 1u)
+					{
+						uartBuffer[nBytesUartBuf++] = *uartbyte;
+						xTimerReset(tUartHand,0);
+					}
+					else
+					{
+						xTimerStop(tUartHand,0);
+						xSemaphoreGive(uartSemph);
+					}
+
+					xSemaphoreGive(uartMutex); //Always give the taken mutexes
+				}
+			}
+		}
+
+	}
+
+	static void rxFrameTsk(void *p)
+	{
+		for(;;)
+		{
+			xSemaphoreTake(uartSemph, portMAX_DELAY);
+			xSemaphoreTake(uartMutex,portMAX_DELAY);
+			USB_VcomWriteBlocking(usbhandle, uartBuffer, nBytesUartBuf);
+			nBytesUartBuf = 0;
+
+			xSemaphoreGive(uartMutex);
+		}
 	}
 
 
