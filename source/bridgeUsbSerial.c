@@ -43,7 +43,7 @@
 /*			  					Variables 							*/
 /*==================================================================*/
 
-	static uint8_t rxBuffer[60];	// Received data
+	static uint8_t rxBuffer[512];	// Received data
 	static uint8_t rxLength = 0;	// Length of the received data
 	static TimerHandle_t rxTimeout;	// To handle the timeout for the received data
 	static SemaphoreHandle_t rxMutex;	//To handle the rxBuffer in a safe way
@@ -51,7 +51,6 @@
 
 	static usb_device_handle usbhandle;
 
-	char bufMsg[512]; //Must be greater than or equal to SIZE_VAR
 
 
 	/* Variables to implement the communication with the UART*/
