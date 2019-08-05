@@ -80,7 +80,7 @@
 	static void rxTimeoutCallback(TimerHandle_t);
 
 	static inline int executeCommand(char *command);
-	static inline void echo(char *msg);
+	static inline void echo(char *msg, size_t len);
 
 
 	/* Callback function to handle the reception timeout */
@@ -161,7 +161,7 @@
 
 			rxBuffer[rxLength]= '\0'; //Set the null character
 			if(!executeCommand((char*)rxBuffer))
-				echo((char*)rxBuffer);
+				echo((char*)rxBuffer, rxLength);
 			rxLength = 0;
 			xSemaphoreGive(rxMutex);
 		}
@@ -189,9 +189,9 @@
 	/**
 	 * Waits for the message to start the configuration process.
 	 */
-	static inline void echo(char *msg)
+	static inline void echo(char *msg, size_t len)
 	{
-		UART_RTOS_Send(&handle, (uint8_t*) msg, strlen(msg));
+		UART_RTOS_Send(&handle, (uint8_t*) msg, len);
 	}
 
 
