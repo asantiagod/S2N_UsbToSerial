@@ -177,9 +177,11 @@
 	{
 		if(strcmp(command,"-->POWER_ON\r\n") == 0)
 		{
-			setPwrPin();
-			vTaskDelay(pdMS_TO_TICKS(500));
+//			setPwrPin();
 			clearPwrPin();
+			vTaskDelay(pdMS_TO_TICKS(500));
+//			clearPwrPin();
+			setPwrPin();
 			vTaskDelay(pdMS_TO_TICKS(500));
 			return true;
 		}
@@ -202,7 +204,7 @@
 
 	static void rxUartTsk(void *p)
 	{
-		uint8_t bgBuffer[100];
+		uint8_t bgBuffer[300];
 		uart_rtos_config_t uart_config = {
 											.base = UART0,
 											.srcclk = CLOCK_GetFreq(UART0_CLK_SRC),
